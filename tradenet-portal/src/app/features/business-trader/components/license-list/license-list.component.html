@@ -1,0 +1,339 @@
+<div class="license-container">
+  <div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="mb-5">
+      <h1 class="display-6 fw-bold text-dark">
+        <i class="fas fa-certificate me-2"></i>Trade Licenses
+      </h1>
+      <p class="text-muted">Browse and apply for available trade licenses and programs</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary mb-3"></div>
+      <p class="text-muted">Loading available licenses...</p>
+    </div>
+
+    <!-- Content -->
+    <ng-container *ngIf="!isLoading">
+      <!-- Filters -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Search Licenses</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="searchTerm"
+                placeholder="Search by title or description...">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Filter by Type</label>
+              <select class="form-select" [(ngModel)]="selectedType">
+                <option value="">All Types</option>
+                <option *ngFor="let type of licenseTypes" [value]="type">{{ type }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Licenses Grid -->
+      <div class="row mb-5 g-3">
+        <div *ngFor="let license of filteredLicenses" class="col-md-6 col-lg-4">
+          <div class="card license-card h-100">
+            <div class="card-header" [ngClass]="'bg-' + (license.type === 'Import' ? 'primary' : license.type === 'Export' ? 'success' : 'info')">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h6 class="card-title mb-1 text-white">{{ license.title }}</h6>
+                  <small class="text-white-50">{{ license.type }} License</small>
+                </div>
+                <div class="license-badge">
+                  <span class="badge bg-white text-dark">Fee: ${{ license.fee }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="text-muted small">{{ license.description | slice:0:100 }}...</p>
+              <div class="license-details mb-3">
+                <small class="d-block text-muted">
+                  <strong>Type:</strong> {{ license.type }}
+                </small>
+                <small class="d-block text-muted">
+                  <strong>Fee:</strong> ${{ license.fee }}
+                </small>
+                <small class="d-block text-muted" *ngIf="license.expiryDate">
+                  <strong>Valid Until:</strong> {{ license.expiryDate | date:'shortDate' }}
+                </small>
+              </div>
+              <div class="d-grid gap-2">
+                <button class="btn btn-primary btn-sm" 
+                        (click)="viewLicenseDetails(license)"
+                        data-bs-toggle="modal" data-bs-target="#licenseDetailModal">
+                  <i class="fas fa-eye me-1"></i>View Details
+                </button>
+                <button class="btn btn-outline-primary btn-sm" 
+                        (click)="openApplicationForm(license)"
+                        data-bs-toggle="modal" data-bs-target="#applicationModal">
+                  <i class="fas fa-file-alt me-1"></i>Apply Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="filteredLicenses.length === 0" class="col-12">
+          <div class="alert alert-info text-center py-5" role="alert">
+            <i class="fas fa-info-circle fa-2x mb-3 d-block"></i>
+            <strong>No licenses found</strong>
+            <p class="mb-0 mt-2 text-muted">Try adjusting your search filters</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Available Programs Section -->
+      <div class="mb-5">
+        <h3 class="fw-bold mb-4">
+          <i class="fas fa-hand-holding-usd me-2"></i>Government Trade Programs
+        </h3>
+        <div class="row g-3">
+          <div *ngFor="let program of activePrograms" class="col-md-6">
+            <div class="card program-card h-100">
+              <div class="card-header bg-success text-white">
+                <h6 class="card-title mb-0">{{ program.title }}</h6>
+              </div>
+              <div class="card-body">
+                <p class="text-muted small mb-3">{{ program.description | slice:0:150 }}...</p>
+                <div class="program-info mb-3">
+                  <small class="d-block text-muted">
+                    <strong>Budget:</strong> ${{ program.budget | number:'1.0-0' }}
+                  </small>
+                  <small class="d-block text-muted">
+                    <strong>Type:</strong> {{ program.programType }}
+                  </small>
+                  <small class="d-block text-muted">
+                    <strong>Period:</strong> {{ program.startDate | date:'shortDate' }} to {{ program.endDate | date:'shortDate' }}
+                  </small>
+                </div>
+                <button class="btn btn-success btn-sm w-100" 
+                        (click)="viewProgramDetails(program)"
+                        data-bs-toggle="modal" data-bs-target="#programDetailModal">
+                  <i class="fas fa-eye me-1"></i>Learn More
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="activePrograms.length === 0" class="col-12">
+            <div class="alert alert-warning" role="alert">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              No active programs available at the moment.
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<!-- License Detail Modal -->
+<div class="modal fade" id="licenseDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">License Details</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedLicense">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <p><strong>License Title:</strong><br/>{{ selectedLicense.title }}</p>
+            <p><strong>Type:</strong><br/>{{ selectedLicense.type }}</p>
+            <p><strong>Fee:</strong><br/>${{ selectedLicense.fee }}</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Status:</strong><br/>
+              <span class="badge bg-info">{{ selectedLicense.status }}</span>
+            </p>
+            <p *ngIf="selectedLicense.issuedDate"><strong>Issued Date:</strong><br/>{{ selectedLicense.issuedDate | date:'mediumDate' }}</p>
+            <p *ngIf="selectedLicense.expiryDate"><strong>Expiry Date:</strong><br/>{{ selectedLicense.expiryDate | date:'mediumDate' }}</p>
+          </div>
+        </div>
+        <div class="mb-3">
+          <strong>Description:</strong>
+          <p class="text-muted mt-2">{{ selectedLicense.description }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button *ngIf="selectedLicense" type="button" class="btn btn-primary" 
+                (click)="openApplicationForm(selectedLicense)" 
+                data-bs-dismiss="modal"
+                data-bs-toggle="modal" data-bs-target="#applicationModal">
+          <i class="fas fa-file-alt me-1"></i>Apply Now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Application Modal -->
+<div class="modal fade" id="applicationModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">Apply for License</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="appError" class="alert alert-danger alert-dismissible fade show">
+          <i class="fas fa-exclamation-circle me-2"></i>{{ appError }}
+          <button type="button" class="btn-close" (click)="appError=''"></button>
+        </div>
+        <div *ngIf="appSuccess" class="alert alert-success alert-dismissible fade show">
+          <i class="fas fa-check-circle me-2"></i>{{ appSuccess }}
+          <button type="button" class="btn-close" (click)="appSuccess=''"></button>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">License</label>
+          <input type="text" class="form-control" [value]="applicationForm.title" disabled />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">License Type</label>
+          <input type="text" class="form-control" [value]="applicationForm.licenseType" disabled />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Additional Notes</label>
+          <textarea class="form-control" [(ngModel)]="applicationForm.additionalNotes" rows="3" placeholder="Add any additional information..."></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Supporting Documents</label>
+          <div class="input-group">
+            <input type="file" class="form-control" multiple (change)="onFilesSelected($event)" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
+          </div>
+          <small class="text-muted d-block mt-2">
+            <i class="fas fa-info-circle me-1"></i>
+            Accepted formats: PDF, DOC, DOCX, JPG, PNG (Max 10MB each)
+          </small>
+          <div *ngIf="applicationForm.files.length > 0" class="mt-2">
+            <strong>Selected Files:</strong>
+            <ul class="list-unstyled mt-2">
+              <li *ngFor="let file of applicationForm.files" class="text-success">
+                <i class="fas fa-file me-1"></i>{{ file.name }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" (click)="submitApplication()" [disabled]="isSubmittingApp">
+          <span *ngIf="isSubmittingApp" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isSubmittingApp ? 'Submitting...' : 'Submit Application' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Program Detail Modal -->
+<div class="modal fade" id="programDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">Program Details</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedProgram">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <p><strong>Program Title:</strong><br/>{{ selectedProgram.title }}</p>
+            <p><strong>Type:</strong><br/>{{ selectedProgram.programType }}</p>
+            <p><strong>Budget:</strong><br/>${{ selectedProgram.budget | number:'1.0-0' }}</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Start Date:</strong><br/>{{ selectedProgram.startDate | date:'mediumDate' }}</p>
+            <p><strong>End Date:</strong><br/>{{ selectedProgram.endDate | date:'mediumDate' }}</p>
+            <p><strong>Status:</strong><br/>
+              <span class="badge" [ngClass]="selectedProgram.status === 'Active' ? 'bg-success' : 'bg-secondary'">
+                {{ selectedProgram.status }}
+              </span>
+            </p>
+          </div>
+        </div>
+        <div class="mb-3">
+          <strong>Description:</strong>
+          <p class="text-muted mt-2">{{ selectedProgram.description }}</p>
+        </div>
+        <div *ngIf="selectedProgram.eligibilityCriteria" class="mb-3">
+          <strong>Eligibility Criteria:</strong>
+          <p class="text-muted mt-2">{{ selectedProgram.eligibilityCriteria }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .license-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 20px;
+    padding-bottom: 40px;
+  }
+
+  .license-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .license-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .license-card .card-header {
+    padding: 20px;
+    border: none;
+  }
+
+  .license-badge {
+    position: relative;
+  }
+
+  .program-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .program-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .btn-primary, .btn-success, .btn-outline-primary {
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .btn-primary:hover, .btn-success:hover {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .license-container {
+      padding-top: 15px;
+    }
+  }
+</style>

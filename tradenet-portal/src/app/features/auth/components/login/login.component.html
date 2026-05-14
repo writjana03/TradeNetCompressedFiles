@@ -1,0 +1,158 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="card shadow-lg p-5">
+      <div class="text-center mb-5">
+        <div class="logo-placeholder">
+          <i class="fas fa-briefcase fa-3x text-primary"></i>
+        </div>
+        <h4 class="fw-bold text-dark mt-3 mb-2">Trader Login</h4>
+        <p class="text-muted small">Access your TradeNet account</p>
+      </div>
+
+      <!-- Error Alert -->
+      <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <strong>{{ errorMessage }}</strong>
+        <button type="button" class="btn-close" (click)="errorMessage=''" aria-label="Close"></button>
+      </div>
+
+      <!-- Success Alert -->
+      <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>{{ successMessage }}</strong>
+        <button type="button" class="btn-close" (click)="successMessage=''" aria-label="Close"></button>
+      </div>
+
+      <!-- Login Form -->
+      <form (ngSubmit)="onSubmit()">
+        <div class="mb-4">
+          <label for="email" class="form-label small fw-bold">Email Address</label>
+          <input 
+            type="email" 
+            id="email"
+            name="email" 
+            [(ngModel)]="email" 
+            class="form-control rounded-3 py-2"
+            placeholder="your@email.com" 
+            required>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label small fw-bold">Password</label>
+          <div class="input-group">
+            <input 
+              [type]="showPassword ? 'text' : 'password'" 
+              id="password"
+              name="password" 
+              [(ngModel)]="password" 
+              class="form-control rounded-start-3 py-2"
+              placeholder="Enter your password" 
+              required>
+            <button 
+              class="btn btn-outline-secondary rounded-end-3" 
+              type="button"
+              (click)="togglePasswordVisibility()">
+              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" [(ngModel)]="rememberMe">
+            <label class="form-check-label small" for="rememberMe">
+              Remember me on this device
+            </label>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          class="btn btn-primary w-100 rounded-pill py-2 shadow-sm fw-bold"
+          [disabled]="isLoading || !email || !password">
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isLoading ? 'Logging in...' : 'Login' }}
+        </button>
+      </form>
+
+      <!-- Register Link -->
+      <div class="text-center mt-4">
+        <p class="small text-muted mb-0">
+          Don't have an account?
+          <a routerLink="/register" class="fw-bold text-decoration-none" style="color:#0066cc;">Register here</a>
+        </p>
+      </div>
+
+      <!-- Forgot Password Link -->
+      <div class="text-center mt-3">
+        <a href="#" class="small text-muted text-decoration-none">Forgot your password?</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 450px;
+  }
+
+  .card {
+    border: none;
+    border-radius: 15px;
+    background: white;
+  }
+
+  .logo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    background: #f0f0f0;
+    border-radius: 50%;
+  }
+
+  .form-control, .input-group-text {
+    border: 1px solid #ddd;
+    font-size: 0.95rem;
+  }
+
+  .form-control:focus {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+  }
+
+  .btn-primary {
+    background-color: #0066cc;
+    border-color: #0066cc;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #0052a3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    .login-container {
+      min-height: auto;
+      padding: 40px 20px;
+    }
+
+    .card {
+      padding: 30px 20px !important;
+    }
+  }
+</style>

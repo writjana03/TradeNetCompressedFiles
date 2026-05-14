@@ -1,0 +1,275 @@
+<div class="profile-container">
+  <div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="mb-5">
+      <h1 class="display-6 fw-bold text-dark">
+        <i class="fas fa-user-circle me-2"></i>Business Profile
+      </h1>
+      <p class="text-muted">Manage your business information and documents</p>
+    </div>
+
+    <!-- Alerts -->
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle me-2"></i>{{ successMessage }}
+      <button type="button" class="btn-close" (click)="successMessage=''" aria-label="Close"></button>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fas fa-exclamation-circle me-2"></i>{{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage=''" aria-label="Close"></button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary mb-3"></div>
+      <p class="text-muted">Loading your profile...</p>
+    </div>
+
+    <!-- Profile Content -->
+    <ng-container *ngIf="!isLoading">
+      <!-- Business Information Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0"><i class="fas fa-building me-2"></i>Business Information</h5>
+          <button class="btn btn-sm" 
+                  [class]="editMode ? 'btn-warning' : 'btn-light'"
+                  (click)="editMode ? cancelEdit() : toggleEditMode()">
+            <i [class]="editMode ? 'fas fa-times' : 'fas fa-edit'" class="me-1"></i>
+            {{ editMode ? 'Cancel' : 'Edit' }}
+          </button>
+        </div>
+        <div class="card-body">
+          <div *ngIf="!editMode && business">
+            <!-- View Mode -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <p class="text-muted small mb-1">Business Name</p>
+                <h6 class="fw-bold">{{ business.name || 'Not provided' }}</h6>
+              </div>
+              <div class="col-md-6 mb-3">
+                <p class="text-muted small mb-1">Business Type</p>
+                <h6 class="fw-bold">
+                  <span class="badge bg-info">{{ business.type }}</span>
+                </h6>
+              </div>
+              <div class="col-md-6 mb-3">
+                <p class="text-muted small mb-1">Address</p>
+                <h6 class="fw-bold">{{ business.address || 'Not provided' }}</h6>
+              </div>
+              <div class="col-md-6 mb-3">
+                <p class="text-muted small mb-1">Contact Information</p>
+                <h6 class="fw-bold">{{ business.contactInfo || 'Not provided' }}</h6>
+              </div>
+              <div class="col-md-6 mb-3">
+                <p class="text-muted small mb-1">Registration Number</p>
+                <h6 class="fw-bold">{{ business.registrationNumber || 'Not provided' }}</h6>
+              </div>
+              <div class="col-md-6 mb-3">
+                <p class="text-muted small mb-1">Compliance Status</p>
+                <h6 class="fw-bold">
+                  <span [class]="'badge ' + (business.complianceStatus === 'Compliant' ? 'bg-success' : 'bg-danger')">
+                    {{ business.complianceStatus || 'N/A' }}
+                  </span>
+                </h6>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="editMode">
+            <!-- Edit Mode -->
+            <form>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label small fw-bold">Business Name</label>
+                  <input type="text" class="form-control" [(ngModel)]="businessForm.name" name="name" />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label small fw-bold">Business Type</label>
+                  <select class="form-select" [(ngModel)]="businessForm.type" name="type">
+                    <option value="Trader">Trader</option>
+                    <option value="Exporter">Exporter</option>
+                    <option value="Importer">Importer</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label small fw-bold">Address</label>
+                  <input type="text" class="form-control" [(ngModel)]="businessForm.address" name="address" />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label small fw-bold">Contact Information</label>
+                  <input type="text" class="form-control" [(ngModel)]="businessForm.contactInfo" name="contactInfo" />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label small fw-bold">Registration Number</label>
+                  <input type="text" class="form-control" [(ngModel)]="businessForm.registrationNumber" name="registrationNumber" />
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary" (click)="saveProfile()" [disabled]="isSaving">
+                <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isSaving ? 'Saving...' : 'Save Changes' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0"><i class="fas fa-file-upload me-2"></i>Business Documents</h5>
+        </div>
+        <div class="card-body">
+          <!-- Upload Section -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">Upload Supporting Documents</h6>
+            <div class="input-group mb-2">
+              <input type="file" class="form-control" multiple (change)="onDocumentsSelected($event)" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
+            </div>
+            <small class="text-muted d-block mb-3">
+              <i class="fas fa-info-circle me-1"></i>
+              Accepted formats: PDF, DOC, DOCX, JPG, PNG (Max 10MB each)
+            </small>
+            <div *ngIf="selectedDocuments.length > 0" class="mb-3">
+              <strong>Selected Files:</strong>
+              <ul class="list-unstyled mt-2">
+                <li *ngFor="let file of selectedDocuments" class="text-success small">
+                  <i class="fas fa-file me-1"></i>{{ file.name }}
+                </li>
+              </ul>
+            </div>
+            <button class="btn btn-success btn-sm" (click)="uploadDocuments()" [disabled]="isSaving || selectedDocuments.length === 0">
+              <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2"></span>
+              {{ isSaving ? 'Uploading...' : 'Upload Documents' }}
+            </button>
+          </div>
+
+          <!-- Documents List -->
+          <div *ngIf="documents.length > 0">
+            <h6 class="fw-bold mb-3">Your Documents</h6>
+            <div class="table-responsive">
+              <table class="table table-sm table-striped">
+                <thead class="table-light">
+                  <tr>
+                    <th>Document Type</th>
+                    <th>Uploaded Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let doc of documents">
+                    <td>
+                      <i class="fas fa-file me-1"></i>{{ doc.docType }}
+                    </td>
+                    <td>{{ doc.uploadedDate | date:'mediumDate' }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="getDocStatusClass(doc.verificationStatus)">
+                        {{ doc.verificationStatus }}
+                      </span>
+                    </td>
+                    <td>
+                      <a [href]="doc.fileURI" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-download"></i>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div *ngIf="documents.length === 0" class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            No documents uploaded yet. Upload supporting documents to enhance your business profile.
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Photo Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0"><i class="fas fa-camera me-2"></i>Profile Photo</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Upload Profile Photo</label>
+                <input type="file" class="form-control" (change)="onProfilePhotoSelected($event)" accept=".jpg,.jpeg,.png" />
+                <small class="text-muted d-block mt-2">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Recommended: JPG or PNG, Max 5MB
+                </small>
+              </div>
+              <button class="btn btn-info btn-sm" (click)="uploadProfilePhoto()" [disabled]="isSaving || !selectedProfilePhoto">
+                <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isSaving ? 'Uploading...' : 'Upload Photo' }}
+              </button>
+            </div>
+            <div class="col-md-6 text-center">
+              <div *ngIf="previewUrl" class="mb-3">
+                <img [src]="previewUrl" alt="Preview" class="img-thumbnail" style="max-width:200px;max-height:200px;" />
+                <p class="text-muted small mt-2">Preview</p>
+              </div>
+              <div *ngIf="!previewUrl" class="bg-light rounded p-5 text-muted">
+                <i class="fas fa-image fa-2x"></i>
+                <p class="mt-3">No photo selected</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<style>
+  .profile-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 20px;
+    padding-bottom: 40px;
+  }
+
+  .card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-header {
+    border-radius: 12px 12px 0 0;
+    border: none;
+  }
+
+  .form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+  }
+
+  .btn {
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .badge {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .img-thumbnail {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .profile-container {
+      padding-top: 15px;
+    }
+  }
+</style>

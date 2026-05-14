@@ -1,0 +1,265 @@
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <h1 class="display-4 fw-bold text-dark mb-4">
+          Empowering Trade & Commerce
+        </h1>
+        <p class="lead text-muted mb-4">
+          TradeNet is your comprehensive platform for business registration, trade licensing, 
+          transaction tracking, and compliance management. Streamline your trade operations with ease.
+        </p>
+        <div class="d-flex gap-3">
+          <a routerLink="/register" class="btn btn-primary btn-lg rounded-pill px-4">
+            <i class="fas fa-user-plus me-2"></i>Get Started
+          </a>
+          <a routerLink="/login" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+            <i class="fas fa-sign-in-alt me-2"></i>Login
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-image">
+          <div class="floating-box">
+            <i class="fas fa-briefcase fa-5x text-primary"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="display-5 fw-bold mb-3">Key Features</h2>
+      <p class="lead text-muted">Everything you need to manage your trade operations</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <h5 class="fw-bold mt-3 mb-2">Business Registration</h5>
+          <p class="text-muted small">
+            Easy registration process for traders, exporters, and importers
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <h5 class="fw-bold mt-3 mb-2">Trade Licensing</h5>
+          <p class="text-muted small">
+            Apply and manage your trade licenses with minimal documentation
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <h5 class="fw-bold mt-3 mb-2">Transaction Tracking</h5>
+          <p class="text-muted small">
+            Monitor all your business transactions in one place
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-hand-holding-usd"></i>
+          </div>
+          <h5 class="fw-bold mt-3 mb-2">Subsidies & Programs</h5>
+          <p class="text-muted small">
+            Access trade programs and government subsidies easily
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works py-5 bg-light">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="display-5 fw-bold mb-3">How It Works</h2>
+      <p class="lead text-muted">Three simple steps to get started</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h5 class="fw-bold mt-4 mb-2">Register Your Business</h5>
+          <p class="text-muted">
+            Create an account and provide your business information
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h5 class="fw-bold mt-4 mb-2">Apply for Licenses</h5>
+          <p class="text-muted">
+            Browse available licenses and submit applications with documents
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h5 class="fw-bold mt-4 mb-2">Start Trading</h5>
+          <p class="text-muted">
+            Track transactions and access government trade programs
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5">
+  <div class="container text-center">
+    <h2 class="display-5 fw-bold mb-4 text-dark">Ready to Transform Your Business?</h2>
+    <p class="lead text-muted mb-4">Join thousands of traders using TradeNet</p>
+    <a routerLink="/register" class="btn btn-primary btn-lg rounded-pill px-5">
+      <i class="fas fa-rocket me-2"></i>Get Started Now
+    </a>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.05) 0%, rgba(0, 102, 204, 0.02) 100%);
+  }
+
+  .hero-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+  }
+
+  .floating-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 50%;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .feature-card {
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0, 102, 204, 0.1);
+    border-color: #0066cc;
+  }
+
+  .feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    background: rgba(0, 102, 204, 0.1);
+    border-radius: 50%;
+    margin: 0 auto;
+    font-size: 2rem;
+    color: #0066cc;
+  }
+
+  .step-card {
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+  }
+
+  .step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: #0066cc;
+    color: white;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto;
+  }
+
+  .cta-section {
+    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    color: white;
+  }
+
+  .cta-section h2,
+  .cta-section p {
+    color: white;
+  }
+
+  .cta-section .btn {
+    background: white;
+    color: #0066cc;
+    border: none;
+  }
+
+  .cta-section .btn:hover {
+    background: #f0f0f0;
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 50px 0;
+    }
+
+    .hero-image {
+      height: 250px;
+    }
+
+    .floating-box {
+      width: 200px;
+      height: 200px;
+    }
+
+    .display-4 {
+      font-size: 2rem;
+    }
+
+    .display-5 {
+      font-size: 1.8rem;
+    }
+  }
+</style>

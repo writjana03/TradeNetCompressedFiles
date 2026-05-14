@@ -1,0 +1,141 @@
+<nav class="navbar navbar-expand-lg fixed-top" [class.navbar-scrolled]="isScrolled">
+  <div class="container">
+    <a class="navbar-brand fw-bold" routerLink="/">
+      <i class="fas fa-briefcase me-2"></i>TradeNet
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center gap-3">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <i class="fas fa-home me-1"></i>Home
+          </a>
+        </li>
+
+        <ng-container *ngIf="authService.isLoggedIn()">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/portal/dashboard" routerLinkActive="active">
+              <i class="fas fa-chart-line me-1"></i>Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/portal/licenses" routerLinkActive="active">
+              <i class="fas fa-certificate me-1"></i>Licenses
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/portal/profile" routerLinkActive="active">
+              <i class="fas fa-user me-1"></i>Profile
+            </a>
+          </li>
+
+          <!-- Notification Bell -->
+          <li class="nav-item position-relative">
+            <a class="nav-link" style="cursor:pointer" (click)="toggleNotifications()">
+              <i class="fas fa-bell fa-lg"></i>
+              <span *ngIf="unreadCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ unreadCount }}
+              </span>
+            </a>
+
+            <!-- Notification Dropdown -->
+            <div *ngIf="showNotifications" class="notification-dropdown card shadow-lg position-absolute end-0 mt-2" style="width:380px;z-index:1050;max-height:500px;">
+              <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center p-3">
+                <span><i class="fas fa-bell me-2"></i>Notifications</span>
+                <button class="btn-close btn-close-white btn-sm" (click)="showNotifications=false"></button>
+              </div>
+              <div class="card-body p-0" style="max-height:400px;overflow-y:auto;">
+                <div *ngIf="notifications.length === 0" class="text-center py-4 text-muted">
+                  <i class="fas fa-inbox fa-2x mb-2"></i>
+                  <p>No notifications</p>
+                </div>
+                <div *ngFor="let n of notifications"
+                     class="list-group-item list-group-item-action border-bottom"
+                     [class.bg-light]="n.status === 'Unread'"
+                     (click)="markAsRead(n.notificationID)"
+                     style="cursor:pointer;padding:12px 15px;">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <h6 class="mb-1">
+                        <i [class]="getNotificationIcon(n.category)" class="me-2"></i>
+                        <strong>{{ n.category }}</strong>
+                        <span *ngIf="n.status === 'Unread'" class="badge bg-primary ms-2">New</span>
+                      </h6>
+                    </div>
+                    <small class="text-muted">{{ n.createdDate | date:'short' }}</small>
+                  </div>
+                  <p class="mb-0 small text-dark">{{ n.message }}</p>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <span class="nav-link text-primary fw-bold">
+              <i class="fas fa-user-circle me-1"></i>{{ authService.getCurrentUserName() }}
+            </span>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3" (click)="logout()">
+              <i class="fas fa-sign-out-alt me-1"></i>Logout
+            </button>
+          </li>
+        </ng-container>
+
+        <ng-container *ngIf="!authService.isLoggedIn()">
+          <li class="nav-item">
+            <a class="btn btn-outline-primary btn-sm fw-bold rounded-pill px-3 me-2" routerLink="/login">
+              <i class="fas fa-sign-in-alt me-1"></i>Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-primary btn-sm fw-bold rounded-pill px-3" routerLink="/register">
+              <i class="fas fa-user-plus me-1"></i>Register
+            </a>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Add spacing for fixed navbar -->
+<style>
+  body {
+    padding-top: 70px;
+  }
+
+  .navbar {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .navbar-scrolled {
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .navbar-brand {
+    color: #0066cc !important;
+    font-size: 1.5rem;
+  }
+
+  .nav-link {
+    color: #333 !important;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: #0066cc !important;
+  }
+
+  .notification-dropdown {
+    right: 0 !important;
+    left: auto !important;
+    top: 100% !important;
+  }
+</style>
